@@ -232,15 +232,21 @@ describe('lib/stream/s3ConcurrentListObjectStream', function () {
             Prefix: options.prefix
           });
 
-          sinon.assert.callCount(s3ConcurrentListObjectStream.push, 3);
+          sinon.assert.callCount(s3ConcurrentListObjectStream.push, 5);
 
           expect(s3ConcurrentListObjectStream.push.getCall(0).args).to.eql([
-            listObjectsResponse1.Contents[0]
+            listObjectsResponse1.CommonPrefixes[0]
           ]);
           expect(s3ConcurrentListObjectStream.push.getCall(1).args).to.eql([
-            listObjectsResponse1.Contents[1]
+            listObjectsResponse1.CommonPrefixes[1]
           ]);
           expect(s3ConcurrentListObjectStream.push.getCall(2).args).to.eql([
+            listObjectsResponse1.Contents[0]
+          ]);
+          expect(s3ConcurrentListObjectStream.push.getCall(3).args).to.eql([
+            listObjectsResponse1.Contents[1]
+          ]);
+          expect(s3ConcurrentListObjectStream.push.getCall(4).args).to.eql([
             listObjectsResponse2.Contents[0]
           ]);
 

@@ -1,7 +1,7 @@
 {
   "name": "@skycatch/s3-object-streams",
   "description": "Tools for streaming the listing of large S3 buckets.",
-  "version": "0.8.1-beta.2",
+  "version": "0.8.1-beta.3",
   "keywords": [
     "aws",
     "s3",
