@@ -5,6 +5,7 @@
   * Add `maxdepth` option to S3ConcurrentObjectStream class
   * Move `aws-sdk` to peerDependencies
   * Add `npm test` script to make running tests easier
+  * Push each `CommonPrefix` into the stream
 
 ## 0.8.0
 
