@@ -1,5 +1,5 @@
 {
-  "name": "s3-object-streams",
+  "name": "@skycatch/s3-object-streams",
   "description": "Tools for streaming the listing of large S3 buckets.",
   "keywords": [
     "aws",
@@ -13,17 +13,20 @@
     "node": ">= 6.9.1"
   },
   "dependencies": {
-    "async": "2.1.2",
-    "aws-sdk": "2.6.15",
+    "async": "^2.6.2",
     "lodash": "4.16.6"
   },
+  "peerDependencies": {
+    "aws-sdk": "^2.460.0"
+  },
   "devDependencies": {
+    "aws-sdk": "^2.460.0",
     "chai": "3.5.0",
     "grunt": "1.0.1",
     "grunt-eslint": "19.0.0",
     "grunt-mocha-test": "0.13.2",
     "mocha": "3.1.2",
-    "sinon": "1.17.6"
+    "sinon": "^7.3.2"
   },
   "repository": {
     "type": "git",
@@ -34,5 +37,8 @@
       "type": "MIT",
       "url": "https://github.com/exratione/s3-object-streams/raw/master/LICENSE"
     }
-  ]
+  ],
+  "scripts": {
+    "test": "npx mocha -r test/mochaInit.js test/**/*.spec.js"
+  }
 }

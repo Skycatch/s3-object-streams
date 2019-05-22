@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.1
+
+  * Add `maxdepth` option to S3ConcurrentObjectStream class
+  * Move `aws-sdk` to peerDependencies
+  * Add `npm test` script to make running tests easier
+
 ## 0.8.0
 
   * Add delimiter option to S3ListObjectStream class.

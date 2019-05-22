@@ -119,7 +119,7 @@ describe('lib/stream/s3ConcurrentListObjectStream', function () {
     });
   });
 
-  describe('listDirectoryAndRecuse', function () {
+  describe('listDirectoryAndRecurse', function () {
     var options;
 
     beforeEach(function () {
@@ -135,7 +135,7 @@ describe('lib/stream/s3ConcurrentListObjectStream', function () {
     });
 
     it('functions as expected', function (done) {
-      s3ConcurrentListObjectStream.listDirectoryAndRecuse(
+      s3ConcurrentListObjectStream.listDirectoryAndRecurse(
         options,
         function (error) {
           sinon.assert.callCount(s3Client.listObjectsV2, 2);
@@ -174,14 +174,16 @@ describe('lib/stream/s3ConcurrentListObjectStream', function () {
             bucket: 'bucket',
             delimiter: '/',
             prefix: prefix + 'b/',
-            maxKeys: 50
+            maxKeys: 50,
+            currentdepth: 2
           });
           expect(s3ConcurrentListObjectStream.queue.push.getCall(1).args[0]).to.eql({
             s3Client: s3Client,
             bucket: 'bucket',
             delimiter: '/',
             prefix: prefix + 'c/',
-            maxKeys: 50
+            maxKeys: 50,
+            currentdepth: 2
           });
 
           done(error);
@@ -194,7 +196,7 @@ describe('lib/stream/s3ConcurrentListObjectStream', function () {
       s3Client.listObjectsV2.onCall(1).yields(new Error());
       s3Client.listObjectsV2.onCall(2).yields(new Error());
 
-      s3ConcurrentListObjectStream.listDirectoryAndRecuse(
+      s3ConcurrentListObjectStream.listDirectoryAndRecurse(
         options,
         function (error, commonPrefixes) {
           sinon.assert.callCount(s3Client.listObjectsV2, 3);
@@ -203,6 +205,47 @@ describe('lib/stream/s3ConcurrentListObjectStream', function () {
         }
       );
     });
+
+    it('stops when maxdepth is reached', function (done) {
+      s3ConcurrentListObjectStream.options.maxdepth = 1
+      s3ConcurrentListObjectStream.listDirectoryAndRecurse(
+        options,
+        function (error) {
+          sinon.assert.callCount(s3Client.listObjectsV2, 2);
+
+          expect(s3Client.listObjectsV2.getCall(0).args[0]).to.eql({
+            Bucket: options.bucket,
+            Delimiter: options.delimiter,
+            ContinuationToken: undefined,
+            MaxKeys: options.maxKeys,
+            Prefix: options.prefix
+          });
+          expect(s3Client.listObjectsV2.getCall(1).args[0]).to.eql({
+            Bucket: options.bucket,
+            Delimiter: options.delimiter,
+            ContinuationToken: listObjectsResponse1.NextContinuationToken,
+            MaxKeys: options.maxKeys,
+            Prefix: options.prefix
+          });
+
+          sinon.assert.callCount(s3ConcurrentListObjectStream.push, 3);
+
+          expect(s3ConcurrentListObjectStream.push.getCall(0).args).to.eql([
+            listObjectsResponse1.Contents[0]
+          ]);
+          expect(s3ConcurrentListObjectStream.push.getCall(1).args).to.eql([
+            listObjectsResponse1.Contents[1]
+          ]);
+          expect(s3ConcurrentListObjectStream.push.getCall(2).args).to.eql([
+            listObjectsResponse2.Contents[0]
+          ]);
+
+          sinon.assert.callCount(s3ConcurrentListObjectStream.queue.push, 0);
+
+          done(error);
+        }
+      );
+    })
   });
 
   describe('processIncomingObject', function () {
@@ -235,7 +278,7 @@ describe('lib/stream/s3ConcurrentListObjectStream', function () {
       expect(argOpts.delimiter).to.equal('/');
       expect(argOpts.prefix).to.equal(options.prefix);
 
-      s3ConcurrentListObjectStream.queue.drain();
+      s3ConcurrentListObjectStream.queue.drain()
     });
 
     it('yields error for missing options', function (done) {

@@ -311,3 +311,7 @@ The running total objects emitted by the stream have the following format:
   }
 }
 ```
+
+## Improvements
+- [ ] upgrade async to v3.0.0
+- [ ] refactor to use async/await
