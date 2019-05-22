@@ -1,12 +1,12 @@
 {
   "name": "@skycatch/s3-object-streams",
   "description": "Tools for streaming the listing of large S3 buckets.",
+  "version": "0.8.1-beta.1",
   "keywords": [
     "aws",
     "s3",
     "stream"
   ],
-  "version": "0.8.0",
   "homepage": "https://github.com/exratione/s3-object-streams",
   "author": "Reason <reason@exratione.com>",
   "engines": {
